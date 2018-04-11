@@ -8,13 +8,16 @@ SECTION = "wayland"
 LICENSE = "GPLv2"
 LIC_FILES_CHKSUM = "file://COPYING;md5=27818cd7fd83877a8e3ef82b82798ef4"
 
-DEPENDS = "virtual/egl gtk+3"
+DEPENDS = "virtual/egl virtual/libgl libglu gtk+3"
 RDEPENDS_${PN} = "wayland gtk+3"
 S = "${WORKDIR}/git"
 
 SRC_URI = "git://github.com/Tarnyko/EGLX"
+SRC_URI += "file://eglx-bugfix.patch"
 
 SRCREV_default_pn-${PN} = "b82af86a8a0daf3408fb7a6e7b07b02b01476626"
+
+inherit pkgconfig
 
 do_compile() {
 	$CC -c -fPIC EGLX.c -o EGLX.o -DWITH_GTK `pkg-config --cflags --libs wayland-client wayland-egl egl gtk+-3.0` -I${STAGING_INCDIR}
@@ -32,12 +35,12 @@ do_compile() {
 do_install() {
 	install -d ${D}${libdir} ${D}${includedir} ${D}${bindir}
 	cp ${S}/libEGLX.so ${S}/examples/jwzgles.so ${D}${libdir}
-	ln -sf ${D}${libdir}/jwzgles.so ${D}${libdir}/libjwzgles.so
+	ln -sf ${D}${libdir}/jwzgles.so libjwzgles.so
 	cp ${S}/EGLX*.h ${S}/examples/jwzgles*.h ${D}${includedir}
 	cp ${S}/examples/glxgears ${D}${bindir}
 }
 
-INSANE_SKIP_${PN} = "dev-so"
+INSANE_SKIP_${PN} = "dev-so ldflags"
 
 FILES_${PN} = "${libdir}/libEGLX.so ${libdir}/*jwzgles.so ${bindir}/glxgears"
 FILES_${PN}-dev = "${includedir}/EGLX*.h ${includedir}/jwzgles*.h"

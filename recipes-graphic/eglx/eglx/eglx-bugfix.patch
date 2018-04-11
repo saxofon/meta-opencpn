@@ -1,0 +1,12 @@
+diff --git a/EGLX.c b/EGLX.c
+index c18abaa..f1a6537 100755
+--- a/EGLX.c
++++ b/EGLX.c
+@@ -5,6 +5,7 @@
+ #include <wayland-client.h>
+ #include <wayland-egl.h>
+ #include <EGL/egl.h>
++#include <EGL/eglext.h>
+ #include <EGL/eglmesaext.h>
+ 
+ #include "EGLX.h"

@@ -9,7 +9,7 @@ SECTION = "graphic"
 LICENSE = "wxWindows"
 LIC_FILES_CHKSUM = "file://docs/licence.txt;md5=18346072db6eb834b6edbd2cdc4f109b"
 
-inherit binconfig autotools
+inherit binconfig autotools pkgconfig
 
 RDEPENDS_${PN} = "gtk+3"
 
@@ -42,17 +42,19 @@ PACKAGECONFIG[wayland] = "--with-x=no --disable-stc, , eglx"
 # We're obliged to overrides this because any call to autoheader
 # will result in "heavy failures".
 autotools_do_configure () {
-    ${S}/autogen.sh
+    cd ${S}
+    ./autogen.sh
 
     cd ${S}/src/tiff/
-    sed -i "5s/^autoheader/#autoheader/" ${S}/src/tiff/autogen.sh
-    ${S}/src/tiff/autogen.sh
+    sed -i "5s/^autoheader/#autoheader/" autogen.sh
+    ./autogen.sh
 
     if [ -e ${S}/configure ]; then
         cd ${S}
         oe_runconf
     fi
 }
+
 do_install_append () {
     for i in $(find ${S}/demos/ ${S}/samples/ -type f -executable | egrep -v "\.[^/]+$") ; do
        cp $i ${D}${bindir}

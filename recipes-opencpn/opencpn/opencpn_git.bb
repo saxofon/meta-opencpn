@@ -5,25 +5,24 @@ LICENSE = "GPLv2+"
 LIC_FILES_CHKSUM = "file://${COREBASE}/meta/files/common-licenses/GPL-2.0;md5=801f80980d171dd6425610833a22dbe6"
 PR = "r0"
 
-SRC_URI = "https://github.com/OpenCPN/OpenCPN/archive/${PN}-${PV}.tar.gz"
-
-SRC_URI[md5sum] = "67b09415a14f32a8f023f39802df375e"
-SRC_URI[sha256sum] = "a65638fe160c2f87b57a93949a64554b198a8a0b2eaeb33e7e49201cb5103f2b"
+SRC_URI = "git://github.com/OpenCPN/OpenCPN.git;protocol=git"
+SRCREV = "bcbda2aa222df52857dc9a179c2492be5acd0222"
 
 inherit cmake
 
-S = "${WORKDIR}/OpenCPN-${PN}-${PV}"
+S = "${WORKDIR}/git"
 
-DEPENDS = "wxwidgets mesa gtk+3 gpsd "
-RDEPENDS_${PN} = "wxwidgets gtk+3 libxcalibrate"
+DEPENDS = "mesa libtinyxml wxwidgets gtk+3 libxcalibrate gpsd eglx"
+RDEPENDS_${PN} = "mesa libtinyxml wxwidgets gtk+3 libxcalibrate gpsd eglx"
 
 EXTRA_OECMAKE = "-DCMAKE_SKIP_RPATH=ON \
                  -DCMAKE_INSTALL_PREFIX=${prefix} \
-                 -DCFLAGS='-O2 -march=native' \
+                 -DCFLAGS='-ggdb -march=native' \
+		 -DSKIP_PLUGINS=ON \
                  "
-##########################
-# can't find wx/*.h path #
-##########################
-EXTRA_OEMAKE = "-I${sysroot}/${includedir}/wx-2.9/"
 
-#FILES_${PN} = "${bindir}/lame"
+do_configure_prepend () {
+	ln -sf ${WORKDIR}/FindGTK3.cmake ${S}
+}
+
+FILES_${PN} = "${datadir}/* ${bindir}/opencpn"
